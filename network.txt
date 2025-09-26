@@ -1,0 +1,17 @@
+Running within a Network
+========================
+
+With pods, a network is attached at the pod level, and every container in that pod shares the same network namespace.
+
+Example:
+
+podman network create --subnet 10.91.0.0/24 notes-net
+# (optional) add --gateway, --ip-range, --dns
+
+podman pod create --name notes --network notes-net -p 8088:8080
+
+podman run -d --name notes-db   --pod notes ...
+podman run -d --name notes-api  --pod notes ...
+podman run -d --name notes-proxy --pod notes ...
+
+
