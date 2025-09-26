@@ -1,0 +1,16 @@
+$ podman ps --pod
+CONTAINER ID  IMAGE                                                COMMAND               CREATED            STATUS            PORTS                   NAMES               POD ID        PODNAME
+914247393c4f  localhost/podman-pause:4.6.2-1693251511                                    About an hour ago  Up About an hour  0.0.0.0:8088->8080/tcp  fdafca75910e-infra  fdafca75910e  notes
+10bbe1854588  docker.io/library/postgres:16-alpine                 postgres              About an hour ago  Up About an hour  0.0.0.0:8088->8080/tcp  notes-db            fdafca75910e  notes
+3f238a4955f1  localhost/notes-api:1.0                              uvicorn app:app -...  25 minutes ago     Up 25 minutes     0.0.0.0:8088->8080/tcp  notes-api           fdafca75910e  notes
+6f42a7a26a40  docker.io/nginxinc/nginx-unprivileged:stable-alpine  nginx -g daemon o...  12 minutes ago     Up 12 minutes     0.0.0.0:8088->8080/tcp  notes-proxy         fdafca75910e  notes
+
+
+$ curl -s http://127.0.0.1:8088/healthz
+
+$ curl -s -X POST http://127.0.0.1:8088/notes   -H "Content-Type: application/json"   -d '{"text":"Test Number 1"}'
+$ curl -s -X POST http://127.0.0.1:8088/notes   -H "Content-Type: application/json"   -d '{"text":"Test Number 2"}'
+$ curl -s -X POST http://127.0.0.1:8088/notes   -H "Content-Type: application/json"   -d '{"text":"Test Number 3"}'
+
+$ curl -s http://127.0.0.1:8088/notes
+

@@ -35,3 +35,9 @@ server {
 }
 NGINX
 
+podman run -d --name notes-proxy --pod notes \
+  -v "$(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf:Z,ro" \
+  -e NGINX_ENTRYPOINT_QUIET_LOGS=1 \
+  docker.io/nginxinc/nginx-unprivileged:stable-alpine
+
+
