@@ -1,0 +1,27 @@
+Step 1 - Create the pod, secret and database
+============================================
+
+# 0) Workspace
+# Start in the current directory
+
+# 1) Create the pod, publishing only proxy’s external port (reserved now)
+podman pod create --name notes -p 8088:8080
+
+# 2) Create a Postgres password as a Podman secret
+printf 'Sup3rS3cret!\n' | podman secret create notes_db_password -
+
+# 3) Durable storage for Postgres
+podman volume create notes-pgdata
+
+# 4) Run the database inside the pod
+podman run -d --name notes-db --pod notes \
+  -e POSTGRES_USER=appuser \
+  -e POSTGRES_DB=appdb \
+  --secret notes_db_password,type=env,target=POSTGRES_PASSWORD \
+  -v notes-pgdata:/var/lib/postgresql/data \
+  docker.io/library/postgres:16-alpine
+
+# 5) Verify DB is up
+podman ps --pod
+podman logs -f notes-db  # Ctrl-C when you see “database system is ready to accept connections”
+

@@ -1,0 +1,24 @@
+# Build FROM the prebuilt base image you were given
+FROM quay.io/fedora/python-313:latest
+
+# Workdir for the API
+WORKDIR /opt/notes-api
+
+# Optional but helpful on fresh base images
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+COPY requirements.txt .
+RUN python -m pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy app
+COPY app.py .
+
+# Listen on 8000 (documentational; still need -p at pod level)
+EXPOSE 8000
+
+# Run as non-root if your base supports it; otherwise rely on rootless Podman
+# USER 10001
+
+# Exec-form entrypoint for proper signal handling
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+
